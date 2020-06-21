@@ -67,8 +67,10 @@ async def _8ball(ctx, *, question):
                  'Very doubtful.']
     await ctx.send(f"Question: {question}\nAnswer: {random.choice(responses)}")
 
+with open("token.txt") as f:
+    TOKEN = f.read().strip()
 
-client.run('NzI0MTA3NjAwODk5MzQyNDE3.Xu-2zA.4j_jILDJmoW8J5pD-7tEKf_dozI')
+client.run(TOKEN)
 
 
 # client.logout()
