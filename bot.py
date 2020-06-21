@@ -1,3 +1,4 @@
+import os
 import discord
 import random
 from discord.ext import commands
@@ -67,10 +68,10 @@ async def _8ball(ctx, *, question):
                  'Very doubtful.']
     await ctx.send(f"Question: {question}\nAnswer: {random.choice(responses)}")
 
-with open("token.txt") as f:
-    TOKEN = f.read().strip()
+# with open("token.txt") as f:
+#     TOKEN = f.read().strip()
 
-client.run(TOKEN)
+client.run(os.environ["ACCESS_TOKEN"])
 
 
 # client.logout()
