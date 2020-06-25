@@ -10,6 +10,9 @@ from discord.ext import commands
 
 client = commands.Bot(command_prefix='!')
 
+# EVENTS
+# ====================================================================
+
 # When bot is ready
 @client.event
 async def on_ready():
@@ -19,33 +22,76 @@ async def on_ready():
 @client.event
 async def on_member_join(member):
     for channel in member.guild.channels:
-        if channel == client.get_channel(724115000578539586):    # general
+        # if channel == client.get_channel(724115000578539586):
+        if str(channel) == 'general':    # general
             print(str(member) + ' has joined the server')
             nameString = str(member)
-            await channel.send(f"Welcome {nameString[0:len(nameString) - 5]} to JoeyCraft!")
+            await channel.send(f"Welcome **{nameString[0:len(nameString) - 5]}** to JoeyCraft!")
 
 
 @client.event
 async def on_member_remove(member):
     for channel in member.guild.channels:
-        if channel == client.get_channel(724115000578539586):    # general
+        if str(channel) == 'general':    # general
             if (member.nick):
                 print(str(member.nick) + ' has left the server')
-                await channel.send(f"{str(member.nick)} has escaped JoeyCraft :(")
+                await channel.send(f"**{str(member.nick)}** has escaped JoeyCraft :(")
             else:
                 nameString = str(member)
-                await channel.send(f"{nameString[0:len(nameString)-5]} has escaped JoeyCraft :(")
+                await channel.send(f"**{nameString[0:len(nameString)-5]}** has escaped JoeyCraft :(")
                 print(nameString[0:len(nameString) - 5] +
                       ' has left the server')
 
 
-@client.command()
+# COMMANDS
+# ======================================================================
+
+@client.command(help="Shows basic information about Joey Bot")
+async def info(ctx):
+    info = """Joey Bot is developed and maintained by **Autolysis#2672** (Lian).
+This bot has some useful features, and some... not so useful features.
+
+To see the list of possible commands, type **!help**
+
+The full documentation of Joey Bot is available on github. You can get there by using **!github**"""
+    await ctx.send(info)
+
+
+@client.command(help="Provides a link to the github page")
+async def github(ctx):
+    await ctx.send("https://github.com/oahsnail/joey-bot-discord")
+
+
+@client.command(help="Pong! Also provides latency in ms")
 async def ping(ctx):
     await ctx.send(f"Pong! {round(client.latency * 1000)}ms")
 
 
-@client.command(aliases=['8ball'])
-async def _8ball(ctx, *, question):
+@client.command(help="Purges the last 'x' amount of messages in this channel. USE CAREFULLY")
+async def purge(ctx, amount=None, *, filter=None):
+
+    # Returns whether or now a message contains the filtered word(s)
+    def match(msg):
+        if filter == None:
+            return True
+        return str(filter).casefold() in str(msg.content).casefold()
+
+    intAmount = 0
+
+    if amount == None or not str(amount).isnumeric():
+        # fix issue here where amount is detected as string even if it's numeric
+        await ctx.send(f"*Please enter the command in the following format:*\n **!purge** **<amount>** *<filtered words>*")
+        return
+    intAmount = int(amount)
+
+    deleted = await ctx.channel.purge(limit=intAmount, check=match)
+
+    await ctx.send(f"Deleted {len(deleted)} messages.")
+
+
+@client.command(name='8ball', help="Accurately answers any question about anything.")
+async def _8ball(ctx, *, question=None):
+
     responses = ['It is certain.',
                  'It is decidedly so.',
                  'Without a doubt.',
@@ -66,11 +112,19 @@ async def _8ball(ctx, *, question):
                  'My sources say no.',
                  'Outlook not so good.',
                  'Very doubtful.']
-    await ctx.send(f"Question: {question}\nAnswer: {random.choice(responses)}")
 
+    if question == None:
+        await ctx.send(f"*Please enter a question in the following format* '**!8ball <question>**")
+    else:
+        await ctx.send(f"Question: {question}\nAnswer: {random.choice(responses)}")
+
+
+# Activate for testing
 # with open("token.txt") as f:
 #     TOKEN = f.read().strip()
+# client.run(TOKEN)
 
+# Activate for release
 client.run(os.environ["ACCESS_TOKEN"])
 
 
