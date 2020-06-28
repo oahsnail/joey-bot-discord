@@ -79,7 +79,7 @@ async def on_member_remove(member):
 # ======================================================================
 
 @client.command()
-async def announcement(ctx, operation="", message=""):
+async def minecraftAnnouncement(ctx, operation="", message=""):
     pass
 
 
