@@ -1,14 +1,46 @@
 import os
 import discord
 import random
-from discord.ext import commands
+from discord.ext import commands, tasks
+
+# Using Python 3.8.2 32-bit
+
+
+client = commands.Bot(command_prefix='!')
 
 # 724115000578539586 <- general channel id
 # 724374341579702394 <- welcome channel id
 # 724370556186787881 <- test channel id
+# 726663240997797939 <- server chat
+# 726663287403577374 <- server console
 
 
-client = commands.Bot(command_prefix='!')
+announcementList = []
+counter = 0
+
+with open('announcements.txt', 'rt') as announcementFile:
+    for line in announcementFile:
+        announcementList.append(line)
+
+# TASKS
+# ===================================================================
+
+
+@tasks.loop(seconds=90)
+async def announcement():
+    global counter
+    channel = client.get_channel(726663287403577374)
+
+    msg = f"say {announcementList[counter]}"
+    coloredMsg = msg.replace('`', u'\u00a7')
+
+    # print(coloredMsg)
+
+    await channel.send(coloredMsg)
+    counter += 1
+    if counter >= len(announcementList):
+        counter = 0
+
 
 # EVENTS
 # ====================================================================
@@ -16,13 +48,13 @@ client = commands.Bot(command_prefix='!')
 # When bot is ready
 @client.event
 async def on_ready():
+    announcement.start()
     print("bot is online")
 
 
 @client.event
 async def on_member_join(member):
     for channel in member.guild.channels:
-        # if channel == client.get_channel(724115000578539586):
         if str(channel) == 'general':    # general
             print(str(member) + ' has joined the server')
             nameString = str(member)
