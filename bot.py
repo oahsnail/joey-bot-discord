@@ -26,7 +26,7 @@ with open('announcements.txt', 'rt') as announcementFile:
 # ===================================================================
 
 
-@tasks.loop(seconds=90)
+@tasks.loop(minutes=8)
 async def announcement():
     global counter
     channel = client.get_channel(726663287403577374)
