@@ -78,6 +78,11 @@ async def on_member_remove(member):
 # COMMANDS
 # ======================================================================
 
+@client.command()
+async def announcement(ctx, operation="", message=""):
+    pass
+
+
 @client.command(help="Shows basic information about Joey Bot")
 async def info(ctx):
     info = """Joey Bot is developed and maintained by **Autolysis#2672** (Lian).
