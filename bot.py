@@ -10,27 +10,28 @@ client = commands.Bot(command_prefix='!')
 
 # 724115000578539586 <- general channel id
 # 724374341579702394 <- welcome channel id
-# 724370556186787881 <- test channel id
-# 726663240997797939 <- server chat
-# 726663287403577374 <- server console
+testChannelID = 724370556186787881
+mcChatChannelID = 726663240997797939
+mcConsoleChannelID = 726663287403577374
 
-
-announcementList = []
 counter = 0
 
-with open('announcements.txt', 'rt') as announcementFile:
-    for line in announcementFile:
-        announcementList.append(line)
 
 # TASKS
 # ===================================================================
 
 
-@tasks.loop(minutes=8)
+@tasks.loop(minutes=10)
 async def announcement():
     global counter
-    channel = client.get_channel(726663287403577374)
+    global mcConsoleChannelID
+    channel = client.get_channel(mcConsoleChannelID)  # Server Console
+    announcementList = []
 
+    with open('announcements.txt', 'r+') as announcementFile:
+        for line in announcementFile:
+            announcementList.append(line)
+        announcementFile.close()
     msg = f"say {announcementList[counter]}"
     coloredMsg = msg.replace('`', u'\u00a7')
 
@@ -77,10 +78,53 @@ async def on_member_remove(member):
 
 # COMMANDS
 # ======================================================================
-
+cringeCheck = False
 @client.command()
-async def minecraftAnnouncement(ctx, operation="", message=""):
-    pass
+async def mcannounce(ctx, operation="", *, arg2="", help="Modify the pool of announcements currently in circulation on JoeyCraft"):
+    announcementFile = open("announcements.txt", 'r')
+    lines = announcementFile.readlines()
+    announcementFile.close()
+    global cringeCheck
+    global addCheck
+    if operation == 'add':
+        if arg2 == "":
+            await ctx.send("*Please enter the command in the following format:*\n **!mcannounce** **add** *<announcement message>*")
+            return
+        with open('announcements.txt', 'a') as file:
+            file.write(arg2 + '\n')
+            file.close()
+        await ctx.send("**Announcement successfully added**")
+        return
+
+    if operation == 'remove':
+        if not arg2.isnumeric():
+            await ctx.send("*Please enter the command in the following format:*\n **!mcannounce** **remove** *<number>*")
+            return
+        if cringeCheck == False:
+            await ctx.send('Are you sure? This action cannot be reversed. Enter the command again to confirm')
+            cringeCheck = True
+            return
+        delete_line('announcements.txt', int(arg2) - 1)
+        cringeCheck = False
+        await ctx.send("**Announcement successfully removed**")
+        return
+
+    if operation == 'show':
+        if arg2 != "":
+            if arg2.isnumeric():
+                await ctx.send('Showing announcement #' + arg2)
+                await ctx.send('```' + lines[int(arg2) - 1] + '```')
+                return
+            else:
+                await ctx.send("*Please enter the command in the following format:*\n **!mcannounce** **show** *<number>*")
+        i = 1
+        await ctx.send("**Showing all announcements in rotation**")
+        for line in lines:
+            await ctx.send('```' + str(i) + ". " + line + '```')
+            i += 1
+        await ctx.send("**Finished**")
+        return
+    await ctx.send("*Please enter a valid mcannounce operation: 'add', 'remove', or 'show'")
 
 
 @client.command(help="Shows basic information about Joey Bot")
@@ -154,6 +198,32 @@ async def _8ball(ctx, *, question=None):
         await ctx.send(f"*Please enter a question in the following format* '**!8ball <question>**")
     else:
         await ctx.send(f"Question: {question}\nAnswer: {random.choice(responses)}")
+
+# HELPERS
+# =========================================================================
+
+
+def delete_line(original_file, line_number):
+    """ Delete a line from a file at the given line number """
+    is_skipped = False
+    current_index = 0
+    dummy_file = original_file + '.bak'
+    # Open original file in read only mode and dummy file in write mode
+    with open(original_file, 'r') as read_obj, open(dummy_file, 'w') as write_obj:
+        # Line by line copy data from original file to dummy file
+        for line in read_obj:
+            # If current line number matches the given line number then skip copying
+            if current_index != line_number:
+                write_obj.write(line)
+            else:
+                is_skipped = True
+            current_index += 1
+    # If any line is skipped then rename dummy file as original file
+    if is_skipped:
+        os.remove(original_file)
+        os.rename(dummy_file, original_file)
+    else:
+        os.remove(dummy_file)
 
 
 # Activate for testing
