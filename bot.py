@@ -143,6 +143,11 @@ async def github(ctx):
     await ctx.send("https://github.com/oahsnail/joey-bot-discord")
 
 
+@client.command(help='Provides a link to the dynmap')
+async def dynmap(ctx):
+    await ctx.send('http://149.56.85.85:8123/')
+
+
 @client.command(help="Pong! Also provides latency in ms")
 async def ping(ctx):
     await ctx.send(f"Pong! {round(client.latency * 1000)}ms")
