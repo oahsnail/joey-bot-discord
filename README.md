@@ -18,12 +18,12 @@ A simple discord.py bot made for my friend's discord server. So far, the only wa
 - !mcannounce (action) (parameter)
   - (action) options:
     - add (announcement message) - Appends a announcement message to the rotation of announcements.
-    - remove (number) - Removes the (number)th announcement from the pool of announcements
+    - remove (number) - Removes the (number)th announcement from the pool of announcements.
     - show (number) - Shows a list of all announcements currently in rotation on the server. If (number) is entered, will only return that specific announcement.
 
 ###### Image Processing
 
 - !grayscale (image-url) - Returns the grayscaled version of the same image.
-- !facedetect (image-url) - Returns the same image with faces marked
+- !facedetect (image-url) - Returns the same image with faces marked.
 
 Note: mcannounce works through utilizing the discordSRV spigot plugin to connect to the minecraft server.
