@@ -259,11 +259,10 @@ def delete_line(original_file, line_number):
         os.remove(dummy_file)
 
 
-if __name__ == "__main__":
-    # Activate for testing
-    # with open("token.txt") as f:
-    #     TOKEN = f.read().strip()
-    # client.run(TOKEN)
+# Activate for testing
+with open("token.txt") as f:
+    TOKEN = f.read().strip()
+client.run(TOKEN)
 
-    # Activate for release
-    client.run(os.environ["ACCESS_TOKEN"])
+# Activate for release
+# client.run(os.environ["ACCESS_TOKEN"])
