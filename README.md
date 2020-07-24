@@ -24,5 +24,6 @@ A simple discord.py bot made for my friend's discord server. So far, the only wa
 ###### Image Processing
 
 - !grayscale (image-url) - Returns the grayscaled version of the same image.
+- !facedetect (image-url) - Returns the same image with faces marked
 
 Note: mcannounce works through utilizing the discordSRV spigot plugin to connect to the minecraft server.

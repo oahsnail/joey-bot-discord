@@ -219,6 +219,19 @@ async def grayscale(ctx, imageUrl):
         await ctx.send(file=discord.File(filepath))
     opencv.delete_file(filepath)
 
+
+@client.command(name='facedetect', help="Takes image url and returns the same image with faces marked")
+async def facedetect(ctx, imageUrl):
+    try:
+        filepath = opencv.download_img(imageUrl)
+    except Exception as e:
+        await ctx.send('Please provide a valid url')
+        return
+    opencv.face_detect(filepath)
+    if os.path.exists(filepath):
+        await ctx.send(file=discord.File(filepath))
+    opencv.clean_temp()
+
 # HELPERS
 # =========================================================================
 
