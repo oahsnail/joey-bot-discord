@@ -1,6 +1,7 @@
 import os
 import discord
 import random
+import opencv
 from discord.ext import commands, tasks
 
 # Using Python 3.8.2 32-bit
@@ -14,11 +15,11 @@ testChannelID = 724370556186787881
 mcChatChannelID = 726663240997797939
 mcConsoleChannelID = 726663287403577374
 
-counter = 0
-
 
 # TASKS
 # ===================================================================
+
+counter = 0
 
 
 @tasks.loop(minutes=10)
@@ -68,7 +69,7 @@ async def on_member_remove(member):
         if str(channel) == 'general':    # general
             if (member.nick):
                 print(str(member.nick) + ' has left the server')
-                await channel.send(f"**{str(member.nick)}** has escaped JoeyCraft :(")
+                await channel.send(f"**{str(member.nick)}** has left JoeyCraft :(")
             else:
                 nameString = str(member)
                 await channel.send(f"**{nameString[0:len(nameString)-5]}** has escaped JoeyCraft :(")
@@ -79,13 +80,14 @@ async def on_member_remove(member):
 # COMMANDS
 # ======================================================================
 cringeCheck = False
+
+
 @client.command()
 async def mcannounce(ctx, operation="", *, arg2="", help="Modify the pool of announcements currently in circulation on JoeyCraft"):
     announcementFile = open("announcements.txt", 'r')
     lines = announcementFile.readlines()
     announcementFile.close()
     global cringeCheck
-    global addCheck
     if operation == 'add':
         if arg2 == "":
             await ctx.send("*Please enter the command in the following format:*\n **!mcannounce** **add** *<announcement message>*")
@@ -204,6 +206,19 @@ async def _8ball(ctx, *, question=None):
     else:
         await ctx.send(f"Question: {question}\nAnswer: {random.choice(responses)}")
 
+
+@client.command(name='grayscale', help="Takes a given image URL and returns the same image, but grayscaled")
+async def grayscale(ctx, imageUrl):
+    try:
+        filepath = opencv.download_img(imageUrl)
+    except Exception as e:
+        await ctx.send('Please provide a valid url')
+        return
+    opencv.grayscale(filepath)
+    if os.path.exists(filepath):
+        await ctx.send(file=discord.File(filepath))
+    opencv.delete_file(filepath)
+
 # HELPERS
 # =========================================================================
 
@@ -231,13 +246,11 @@ def delete_line(original_file, line_number):
         os.remove(dummy_file)
 
 
-# Activate for testing
-# with open("token.txt") as f:
-#     TOKEN = f.read().strip()
-# client.run(TOKEN)
+if __name__ == "__main__":
+    # Activate for testing
+    # with open("token.txt") as f:
+    #     TOKEN = f.read().strip()
+    # client.run(TOKEN)
 
-# Activate for release
-client.run(os.environ["ACCESS_TOKEN"])
-
-
-# client.logout()
+    # Activate for release
+    client.run(os.environ["ACCESS_TOKEN"])
