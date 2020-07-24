@@ -211,7 +211,7 @@ async def _8ball(ctx, *, question=None):
 async def grayscale(ctx, imageUrl):
     try:
         filepath = opencv.download_img(imageUrl)
-    except Exception as e:
+    except Exception:
         await ctx.send('Please provide a valid url')
         return
     opencv.grayscale(filepath)
@@ -224,7 +224,7 @@ async def grayscale(ctx, imageUrl):
 async def facedetect(ctx, imageUrl):
     try:
         filepath = opencv.download_img(imageUrl)
-    except Exception as e:
+    except Exception:
         await ctx.send('Please provide a valid url')
         return
     opencv.face_detect(filepath)
